@@ -30,9 +30,22 @@
             <span class="date">
               {{ dayjs(item).date() }}
             </span>
-            <div class="calendar-panel">
-              <slot name="dateCellRender" :current="item"></slot>
+            <div class="panel">
+              <slot name="date" :current="item"></slot>
             </div>
+          </td>
+          <td v-if="props.space" class="week-total">
+            <div class="panel">
+              <slot name="weekTotal" :current="row"></slot>
+            </div>
+          </td>
+        </tr>
+        <tr v-if="props.space">
+          <td v-for="num in 7" :key="num">
+            <slot :name="`total${num}`"></slot>
+          </td>
+          <td class="total">
+            <slot name="allTotal"></slot>
           </td>
         </tr>
       </tbody>
@@ -60,8 +73,8 @@ const props = defineProps({
     default: '',
   },
   space: {
-    type: String,
-    default: '',
+    type: String || null,
+    default: null,
   },
 });
 
@@ -127,6 +140,7 @@ const getMonthOfDays = (
         prevDay += 1;
       }
     }
+
     weekOfDays.push(
       dayjs(new Date(currentYear.value, currentMonth.value - 1, day)).format('YYYY-MM-DD'),
     );
@@ -160,7 +174,7 @@ onBeforeMount(() => {
     weeks.value = [...dayjs.weekdaysShort()];
   }
 
-  if (props.space !== '') {
+  if (props.space) {
     weeks.value = [...dayjs.weekdaysShort(), props.space];
   }
 });
