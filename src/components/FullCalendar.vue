@@ -15,20 +15,27 @@
       </thead>
       <tbody>
         <tr v-for="(row, index) in dates" :key="index">
-          <td v-for="(item, index2) in row" :key="index2">
-            <div class="date-panel">
-              <span
-                class="date"
-                :class="{
-                  'text-prev': item.month !== month,
-                  today:
-                    today.day === item.day &&
-                    today.year === item.year &&
-                    today.month === item.month,
-                }"
-              >
-                {{ item.day }}
-              </span>
+          <td
+            v-for="(item, index2) in row"
+            :key="index2"
+            :class="{ 'text-light': item.month !== month }"
+          >
+            <span
+              class="date"
+              :class="{
+                today: item.fullDay && today === item.fullDay,
+              }"
+            >
+              {{ item.day }}
+            </span>
+            <div class="calendar-panel">
+              {{ today }} <br />
+              <ul>
+                <li>{{ item.fullDay }}</li>
+                <li>year: {{ item.year }}</li>
+                <li>month: {{ item.month }}</li>
+                <li>day: {{ item.day }}</li>
+              </ul>
             </div>
           </td>
         </tr>
@@ -40,18 +47,19 @@
 <script setup lang="ts">
 import '@/scss/calendar.scss';
 import dayjs from 'dayjs';
-import calendar from 'dayjs/plugin/calendar';
+// import calendar from 'dayjs/plugin/calendar';
 import { onBeforeMount, onMounted, ref } from 'vue';
-dayjs.extend(calendar);
+// dayjs.extend(calendar);
 
 interface IDate {
   day: number | null;
   year?: number;
   month?: number;
+  fullDay?: string | null;
 }
 
-const today = ref<IDate>({ day: 0 });
 const date = new Date();
+const today = ref<any>(dayjs(date).format('YYYY-MM-DD'));
 const weeks = ref<string[]>([
   '일요일',
   '월요일',
@@ -67,9 +75,6 @@ const currentYear = ref<number>(0);
 const currentMonth = ref<number>(0);
 const year = ref<number>(0);
 const month = ref<number>(0);
-
-// const lastMonthStart = ref<number>(0);
-// const nextMonthStart = ref<number>(0);
 
 const calendarData = (arg?: any) => {
   if (arg < 0) {
@@ -114,26 +119,28 @@ const getMonthOfDays = (
   let day = 1;
   let prevDay = prevMonthLastDate - monthFirstDay + 1;
 
-  console.log(monthLastDate);
-
   const dates: any = [];
   let weekOfDays = [];
   while (day <= monthLastDate) {
     if (day === 1) {
       // 1일이 어느 요일인지에 따라 테이블에 그리기 위한 지난 셀의 날짜들을 구할 필요가 있다.
       for (let j = 0; j < monthFirstDay; j += 1) {
-        //if (j === 0) lastMonthStart.value = prevDay; // 지난 달에서 제일 작은 날짜
         const item = {
           day: prevDay,
-          year,
+          year: year.value,
           month: month.value - 1,
         };
         weekOfDays.push(item);
         prevDay += 1;
       }
     }
-
-    weekOfDays.push({ day, year, month });
+    const d = new Date(year.value, month.value - 1, day);
+    weekOfDays.push({
+      day,
+      year: year.value,
+      month: month.value,
+      fullDay: dayjs(d).format('YYYY-MM-DD'),
+    });
 
     if (weekOfDays.length === 7) {
       // 일주일 채우면
@@ -143,6 +150,10 @@ const getMonthOfDays = (
     }
     day += 1;
   }
+
+  // if (weeks.value.length > 7) weekOfDays.push(-2);
+  if (weekOfDays.length > 0) dates.push(weekOfDays); // 남은 날짜 추가
+
   const len = weekOfDays.length;
   if (len > 0 && len < 7) {
     for (let k = 1; k <= 7 - len; k += 1) {
@@ -153,9 +164,6 @@ const getMonthOfDays = (
       });
     }
   }
-  // if (weeks.value.length > 7) weekOfDays.push(-2);
-  if (weekOfDays.length > 0) dates.push(weekOfDays); // 남은 날짜 추가
-  //nextMonthStart.value = weekOfDays[0]; // 이번 달 마지막 주에서 제일 작은 날짜
   return dates;
 };
 
@@ -164,7 +172,6 @@ onBeforeMount(() => {
   currentMonth.value = date.getMonth() + 1;
   year.value = currentYear.value;
   month.value = currentMonth.value;
-  today.value = { day: date.getDate(), year: currentYear.value, month: currentMonth.value };
 });
 
 onMounted(() => {
