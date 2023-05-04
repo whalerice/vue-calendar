@@ -17,12 +17,16 @@
         <tr v-for="(row, index) in dates" :key="index">
           <td v-for="(item, index2) in row" :key="index2">
             <div class="date-panel">
-              <span class="date" :class="{ 'text-prev': item.month !== month }">
-                <!-- :class="{
-                'has-text-info-dark': index === 0 && day >= lastMonthStart,
-                'has-text-danger': dates.length - 1 === index && nextMonthStart > day,
-                'has-text-primary': day === today && month === currentMonth && year === currentYear,
-              }" -->
+              <span
+                class="date"
+                :class="{
+                  'text-prev': item.month !== month,
+                  today:
+                    today.day === item.day &&
+                    today.year === item.year &&
+                    today.month === item.month,
+                }"
+              >
                 {{ item.day }}
               </span>
             </div>
@@ -41,12 +45,12 @@ import { onBeforeMount, onMounted, ref } from 'vue';
 dayjs.extend(calendar);
 
 interface IDate {
-  day: number;
-  year: number;
-  month: number;
+  day: number | null;
+  year?: number;
+  month?: number;
 }
 
-const today = dayjs(new Date());
+const today = ref<IDate>({ day: 0 });
 const date = new Date();
 const weeks = ref<string[]>([
   '일요일',
@@ -119,7 +123,11 @@ const getMonthOfDays = (
       // 1일이 어느 요일인지에 따라 테이블에 그리기 위한 지난 셀의 날짜들을 구할 필요가 있다.
       for (let j = 0; j < monthFirstDay; j += 1) {
         //if (j === 0) lastMonthStart.value = prevDay; // 지난 달에서 제일 작은 날짜
-        const item = { day: prevDay, year, month: month.value - 1 };
+        const item = {
+          day: prevDay,
+          year,
+          month: month.value - 1,
+        };
         weekOfDays.push(item);
         prevDay += 1;
       }
@@ -138,7 +146,11 @@ const getMonthOfDays = (
   const len = weekOfDays.length;
   if (len > 0 && len < 7) {
     for (let k = 1; k <= 7 - len; k += 1) {
-      weekOfDays.push({ day: k, year, month: month.value + 1 });
+      weekOfDays.push({
+        day: k,
+        year: year.value,
+        month: month.value + 1,
+      });
     }
   }
   // if (weeks.value.length > 7) weekOfDays.push(-2);
@@ -152,13 +164,10 @@ onBeforeMount(() => {
   currentMonth.value = date.getMonth() + 1;
   year.value = currentYear.value;
   month.value = currentMonth.value;
+  today.value = { day: date.getDate(), year: currentYear.value, month: currentMonth.value };
 });
 
 onMounted(() => {
   calendarData();
-
-  console.log(today.$y);
-  console.log(today.$M);
-  console.log(today.$d);
 });
 </script>

@@ -26,12 +26,12 @@
   border-spacing: 0;
 
   td {
-    padding: 5px;
-    border: 1px solid #ccc;
+    border: 1px solid #ddd;
   }
   thead {
     td {
       text-align: center;
+      padding: 5px;
     }
   }
   .date-panel {
@@ -40,11 +40,23 @@
   }
   .date {
     position: absolute;
-    top: 0;
-    right: 0;
-    font-size: 12px;
+    top: 5px;
+    right: 5px;
+    font-size: 14px;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
     &.text-prev {
-      color: gray;
+      color: rgba(0, 0, 0, 0.2);
+    }
+    &.today {
+      border-radius: 50em;
+      background-color: #0d6efd;
+      color: #fff;
     }
   }
 }
