@@ -53,7 +53,7 @@ import { onBeforeMount, onMounted, ref } from 'vue';
 const props = defineProps({
   locale: {
     type: String,
-    default: 'ko',
+    default: '',
   },
   weekdays: {
     type: String,
