@@ -49,7 +49,7 @@ const weeks = ref<string[]>([
   '목요일',
   '금요일',
   '토요일',
-  '주간',
+  // '주간',
 ]);
 const dates = ref<number[][]>([]);
 const currentYear = ref<number>(0);
@@ -103,6 +103,8 @@ const getMonthOfDays = (
   let day = 1;
   let prevDay = prevMonthLastDate - monthFirstDay + 1;
 
+  console.log(monthLastDate);
+
   const dates: any = [];
   let weekOfDays = [];
   while (day <= monthLastDate) {
@@ -115,13 +117,11 @@ const getMonthOfDays = (
       }
     }
 
-    console.log(weekOfDays);
-
     weekOfDays.push(day);
 
     if (weekOfDays.length === 7) {
       // 일주일 채우면
-      if (weeks.value.length > 7) weekOfDays.push(-1);
+      // if (weeks.value.length > 7) weekOfDays.push(-1);
       dates.push(weekOfDays);
       weekOfDays = []; // 초기화
     }
