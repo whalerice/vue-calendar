@@ -15,15 +15,15 @@
       </thead>
       <tbody>
         <tr v-for="(row, index) in dates" :key="index">
-          <td v-for="(day, index2) in row" :key="index2">
+          <td v-for="(item, index2) in row" :key="index2">
             <div class="date-panel">
-              <span class="date">
+              <span class="date" :class="{ 'text-prev': item.month !== month }">
                 <!-- :class="{
                 'has-text-info-dark': index === 0 && day >= lastMonthStart,
                 'has-text-danger': dates.length - 1 === index && nextMonthStart > day,
                 'has-text-primary': day === today && month === currentMonth && year === currentYear,
               }" -->
-                {{ day }}
+                {{ item.day }}
               </span>
             </div>
           </td>
@@ -40,6 +40,13 @@ import calendar from 'dayjs/plugin/calendar';
 import { onBeforeMount, onMounted, ref } from 'vue';
 dayjs.extend(calendar);
 
+interface IDate {
+  day: number;
+  year: number;
+  month: number;
+}
+
+const today = dayjs(new Date());
 const date = new Date();
 const weeks = ref<string[]>([
   '일요일',
@@ -51,7 +58,7 @@ const weeks = ref<string[]>([
   '토요일',
   // '주간',
 ]);
-const dates = ref<number[][]>([]);
+const dates = ref<IDate[][]>([]);
 const currentYear = ref<number>(0);
 const currentMonth = ref<number>(0);
 const year = ref<number>(0);
@@ -112,12 +119,13 @@ const getMonthOfDays = (
       // 1일이 어느 요일인지에 따라 테이블에 그리기 위한 지난 셀의 날짜들을 구할 필요가 있다.
       for (let j = 0; j < monthFirstDay; j += 1) {
         //if (j === 0) lastMonthStart.value = prevDay; // 지난 달에서 제일 작은 날짜
-        weekOfDays.push(prevDay);
+        const item = { day: prevDay, year, month: month.value - 1 };
+        weekOfDays.push(item);
         prevDay += 1;
       }
     }
 
-    weekOfDays.push(day);
+    weekOfDays.push({ day, year, month });
 
     if (weekOfDays.length === 7) {
       // 일주일 채우면
@@ -130,7 +138,7 @@ const getMonthOfDays = (
   const len = weekOfDays.length;
   if (len > 0 && len < 7) {
     for (let k = 1; k <= 7 - len; k += 1) {
-      weekOfDays.push(k);
+      weekOfDays.push({ day: k, year, month: month.value + 1 });
     }
   }
   // if (weeks.value.length > 7) weekOfDays.push(-2);
@@ -148,5 +156,9 @@ onBeforeMount(() => {
 
 onMounted(() => {
   calendarData();
+
+  console.log(today.$y);
+  console.log(today.$M);
+  console.log(today.$d);
 });
 </script>
