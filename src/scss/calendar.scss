@@ -42,6 +42,13 @@
       &.text-light {
         color: rgba(0, 0, 0, 0.2);
       }
+      &.today {
+        background-color: rgba(13, 110, 253, 0.1);
+        .date {
+          color: #0d6efd;
+          font-weight: 700;
+        }
+      }
     }
   }
   .date {
@@ -55,11 +62,6 @@
     text-align: center;
     border-radius: 50em;
     background-color: transparent;
-
-    &.today {
-      color: #0d6efd;
-      font-weight: 700;
-    }
   }
   .calendar-panel {
     width: 100%;

@@ -15,18 +15,21 @@
       </thead>
       <tbody>
         <tr v-for="(row, index) in dates" :key="index">
-          <td v-for="(item, index2) in row" :key="index2">
-            <!-- 
-            :class="{ 'text-light': item.month !== month }"
+          <td
+            v-for="(item, index2) in row"
+            :key="index2"
             :class="{
-                today: item.fullDay && today === item.fullDay,
-              }" -->
+              'text-light': dayjs(item).month() + 1 !== currentMonth,
+              today: item === today,
+            }"
+          >
             <span class="date">
-              {{ item }}
+              {{ dayjs(item).date() }}
             </span>
             <div class="calendar-panel">
-              {{ today }} <br /><br />
-              {{ item }}
+              <ul>
+                <li>{{ item }}</li>
+              </ul>
             </div>
           </td>
         </tr>
@@ -102,11 +105,15 @@ const getMonthOfDays = (
     if (day === 1) {
       // 1일이 어느 요일인지에 따라 테이블에 그리기 위한 지난 셀의 날짜들을 구할 필요가 있다.
       for (let j = 0; j < monthFirstDay; j += 1) {
-        weekOfDays.push(prevDay);
+        weekOfDays.push(
+          dayjs(new Date(currentYear.value, currentMonth.value - 2, prevDay)).format('YYYY-MM-DD'),
+        );
         prevDay += 1;
       }
     }
-    weekOfDays.push(day);
+    weekOfDays.push(
+      dayjs(new Date(currentYear.value, currentMonth.value - 1, day)).format('YYYY-MM-DD'),
+    );
 
     if (weekOfDays.length === 7) {
       // 일주일 채우면
@@ -121,7 +128,9 @@ const getMonthOfDays = (
   const len = weekOfDays.length;
   if (len > 0 && len < 7) {
     for (let k = 1; k <= 7 - len; k += 1) {
-      weekOfDays.push(k);
+      weekOfDays.push(
+        dayjs(new Date(currentYear.value, currentMonth.value, k)).format('YYYY-MM-DD'),
+      );
     }
   }
   console.log(dates);
