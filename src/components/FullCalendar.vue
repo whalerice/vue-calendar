@@ -2,7 +2,7 @@
   <div class="calendar-area">
     <div class="calendar-header">
       <button type="button" @click="calendarData(-1)">{{ '<' }}</button>
-      <div>{{ currentYear }}년 {{ currentMonth }}월</div>
+      <div>{{ dayjs(new Date(currentYear, currentMonth - 1)).format('YYYY-MM') }}</div>
       <button type="button" @click="calendarData(1)">{{ '>' }}</button>
     </div>
     <table class="calendar">
@@ -27,9 +27,7 @@
               {{ dayjs(item).date() }}
             </span>
             <div class="calendar-panel">
-              <ul>
-                <li>{{ item }}</li>
-              </ul>
+              <slot name="dateCellRender" :current="item"></slot>
             </div>
           </td>
         </tr>
@@ -40,21 +38,35 @@
 
 <script setup lang="ts">
 import '@/scss/calendar.scss';
+import 'dayjs/locale/de';
+import 'dayjs/locale/ko';
+import 'dayjs/locale/zh-cn';
+import 'dayjs/locale/ja';
+import localeData from 'dayjs/plugin/localeData';
 import dayjs from 'dayjs';
 import { onBeforeMount, onMounted, ref } from 'vue';
 
+const props = defineProps({
+  locale: {
+    type: String,
+    default: 'ko',
+  },
+  weekdays: {
+    type: String,
+    default: '',
+  },
+  space: {
+    type: String,
+    default: '',
+  },
+});
+
+dayjs.locale(props.locale);
+dayjs.extend(localeData);
+
 const date = new Date();
 const today = ref<string>(dayjs(date).format('YYYY-MM-DD'));
-const weeks = ref<string[]>([
-  '일요일',
-  '월요일',
-  '화요일',
-  '수요일',
-  '목요일',
-  '금요일',
-  '토요일',
-  // '주간',
-]);
+const weeks = ref<string[]>([...dayjs.weekdays()]);
 const dates = ref<string[][]>([]);
 const currentYear = ref<number>(0);
 const currentMonth = ref<number>(0);
@@ -133,14 +145,20 @@ const getMonthOfDays = (
       );
     }
   }
-  console.log(dates);
-
   return dates;
 };
 
 onBeforeMount(() => {
   currentYear.value = date.getFullYear();
   currentMonth.value = date.getMonth() + 1;
+
+  if (props.weekdays === 'short') {
+    weeks.value = [...dayjs.weekdaysShort()];
+  }
+
+  if (props.space !== '') {
+    weeks.value = [...dayjs.weekdaysShort(), props.space];
+  }
 });
 
 onMounted(() => {
