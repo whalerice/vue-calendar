@@ -1,9 +1,9 @@
 <template>
   <div class="calendar-area">
     <div class="calendar-header">
-      <button type="button" @click="calendarData(-1)">😫</button>
-      <div>{{ currentYear }}년 {{ currentMonth }}월</div>
-      <button type="button" @click="calendarData(1)">😁</button>
+      <button type="button" @click="calendarData(-1)">{{ '<' }}</button>
+      <div>{{ year }}년 {{ month }}월</div>
+      <button type="button" @click="calendarData(1)">{{ '>' }}</button>
     </div>
     <table class="calendar">
       <thead>
@@ -41,7 +41,16 @@ import { onBeforeMount, onMounted, ref } from 'vue';
 dayjs.extend(calendar);
 
 const date = new Date();
-const weeks = ref<string[]>(['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일']);
+const weeks = ref<string[]>([
+  '일요일',
+  '월요일',
+  '화요일',
+  '수요일',
+  '목요일',
+  '금요일',
+  '토요일',
+  '주간',
+]);
 const dates = ref<number[][]>([]);
 const currentYear = ref<number>(0);
 const currentMonth = ref<number>(0);
@@ -93,7 +102,8 @@ const getMonthOfDays = (
 ) => {
   let day = 1;
   let prevDay = prevMonthLastDate - monthFirstDay + 1;
-  const dates = [];
+
+  const dates: any = [];
   let weekOfDays = [];
   while (day <= monthLastDate) {
     if (day === 1) {
@@ -104,9 +114,14 @@ const getMonthOfDays = (
         prevDay += 1;
       }
     }
+
+    console.log(weekOfDays);
+
     weekOfDays.push(day);
+
     if (weekOfDays.length === 7) {
       // 일주일 채우면
+      if (weeks.value.length > 7) weekOfDays.push(-1);
       dates.push(weekOfDays);
       weekOfDays = []; // 초기화
     }
@@ -118,6 +133,7 @@ const getMonthOfDays = (
       weekOfDays.push(k);
     }
   }
+  // if (weeks.value.length > 7) weekOfDays.push(-2);
   if (weekOfDays.length > 0) dates.push(weekOfDays); // 남은 날짜 추가
   //nextMonthStart.value = weekOfDays[0]; // 이번 달 마지막 주에서 제일 작은 날짜
   return dates;
