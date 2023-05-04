@@ -61,6 +61,7 @@
 
   td {
     border: 1px solid #ddd;
+    width: 10%;
   }
   thead {
     td {
@@ -71,6 +72,7 @@
   tbody {
     td {
       position: relative;
+
       &.text-light {
         color: rgba(0, 0, 0, 0.2);
       }
@@ -79,12 +81,6 @@
         .date {
           color: #0d6efd;
         }
-      }
-      &.week-total {
-        width: 10%;
-      }
-      &.total {
-        width: 10%;
       }
     }
   }

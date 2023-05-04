@@ -36,7 +36,7 @@
           </td>
           <td v-if="props.space" class="week-total">
             <div class="panel">
-              <slot name="weekTotal" :current="row"></slot>
+              <slot name="weekTotal" :current="row" :week="index + 1"></slot>
             </div>
           </td>
         </tr>
