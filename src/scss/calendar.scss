@@ -1,6 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.6/dist/web/variable/pretendardvariable-dynamic-subset.css');
 
+@mixin arrow($size: 24px, $color: 'rgb(0,0,0)') {
+  display: block;
+  width: $size;
+  height: $size;
+  background: url('data:image/svg+xml, <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 96 960 960" fill="#{$color}"><path d="M561 816 320 575l241-241 43 43-198 198 198 198-43 43Z"/></svg>')
+    50% 50% no-repeat;
+  background-size: $size $size;
+}
+
 .calendar-area {
   font-family: 'Roboto', 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont,
     system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR',
@@ -19,24 +28,27 @@
   font-size: 20px;
   [class^='btn-date'] {
     margin: 0 10px;
-    border: 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
     padding: 0;
     cursor: pointer;
-  }
-  .arrow {
-    display: block;
-    width: 24px;
-    height: 24px;
-  }
-  .btn-date-lt {
-    .arrow {
-      background-color: blue;
+    background-color: #fff;
+    transition: 0.3s ease;
+    &:hover,
+    &:active {
+      background-color: rgba(13, 110, 253, 0.1);
+      border-color: rgba(13, 110, 253, 0.1);
+      .arrow {
+        @include arrow(24px, rgb(13, 110, 253));
+      }
     }
   }
-
+  .arrow {
+    @include arrow;
+  }
   .btn-date-rt {
     .arrow {
-      background-color: yellow;
+      transform: rotate(180deg);
     }
   }
 }
