@@ -1,9 +1,13 @@
 <template>
   <div class="calendar-area">
     <div class="calendar-header">
-      <button type="button" @click="calendarData(-1)">{{ '<' }}</button>
+      <button type="button" class="btn-date-lt" @click="calendarData(-1)">
+        <i class="arrow"></i>
+      </button>
       <div>{{ dayjs(new Date(currentYear, currentMonth - 1)).format('YYYY-MM') }}</div>
-      <button type="button" @click="calendarData(1)">{{ '>' }}</button>
+      <button type="button" class="btn-date-rt" @click="calendarData(1)">
+        <i class="arrow"></i>
+      </button>
     </div>
     <table class="calendar">
       <thead>

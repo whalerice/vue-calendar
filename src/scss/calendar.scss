@@ -17,8 +17,27 @@
   justify-content: center;
   padding: 10px;
   font-size: 20px;
-  button {
+  [class^='btn-date'] {
     margin: 0 10px;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+  }
+  .arrow {
+    display: block;
+    width: 24px;
+    height: 24px;
+  }
+  .btn-date-lt {
+    .arrow {
+      background-color: blue;
+    }
+  }
+
+  .btn-date-rt {
+    .arrow {
+      background-color: yellow;
+    }
   }
 }
 
